@@ -1,20 +1,5 @@
-//
-//    FILE: ADS_RP2040_WIRE1.ino
-//  AUTHOR: Rob.Tillaart / Intubun
-// PURPOSE: read analog input
-//     URL: https://github.com/RobTillaart/ADS1X15
-
-// test
-// connect 1 potmeter
-//
-// GND ---[   x   ]------ 5V
-//            |
-//
-// measure at x (connect to AIN0).
-
 
 #include "ADS1X15.h"
-
 
 // choose your sensor
 // ADS1013 ADS(0x48);
@@ -22,7 +7,7 @@
 // ADS1015 ADS(0x48);
 // ADS1113 ADS(0x48);
 // ADS1114 ADS(0x48);
-ADS1115 ADS(0x48, &Wire);
+ADS1115 ADS(0x48, &Wire); //SCL 0, SCA 0 || &Wire1 -> SCL 1, SDA 1
 
 
 void setup()
@@ -57,7 +42,3 @@ void loop()
  
   delay(500);
 }
-
-
-
-// -- END OF FILE --
