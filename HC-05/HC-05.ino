@@ -1,8 +1,8 @@
 
 //VCC -> 3.3v 
 //GND -> GND 
-//RX(4) -> HC-05 TX 
-//TX(5) -> HC-05 RX 
+//RX(5) -> HC-05 TX 
+//TX(4) -> HC-05 RX 
 
 void setup() {
 
