@@ -5,7 +5,7 @@
 //TX(4) -> HC-05 RX
 #define RX_PIN 5
 #define TX_PIN 4
-#define NUM_LEDS 2
+#define NUM_LEDS 1
 #define LED_PIN 18
 #define NUM_LEDS 2
 
@@ -54,8 +54,7 @@ void loop() {
       // Example: Turn off all LEDs
       pixels.clear();
       pixels.show();
-      delay(2000); // Delay before repeating the loop
-
+      
       break;
 
        case 'G' : 
@@ -69,8 +68,7 @@ void loop() {
       // Example: Turn off all LEDs
       pixels.clear();
       pixels.show();
-      delay(2000); // Delay before repeating the loop
-
+      
       break;
     }
   }
