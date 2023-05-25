@@ -6,8 +6,8 @@
 #define RX_PIN 5
 #define TX_PIN 4
 #define NUM_LEDS 1
-#define LED_PIN 18
-#define NUM_LEDS 2
+#define LED_PIN 28
+#define NUM_LEDS 1
 
 int Button = 20;
 
@@ -30,10 +30,7 @@ void setup() {
 }
 
 void loop() {
-  buttonState = digitalRead(Button);
-  Serial.println(buttonState);
 
-  delay(500);
   if (Serial.available()) {
     Serial2.write(Serial.read());
   }
