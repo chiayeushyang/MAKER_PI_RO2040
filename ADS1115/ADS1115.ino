@@ -17,7 +17,7 @@ void setup()
   Serial.print("ADS1X15_LIB_VERSION: ");
   Serial.println(ADS1X15_LIB_VERSION);
 
-  ADS.begin(0, 1);   // SDA (Pin 26), SCL(Pin 27)
+  ADS.begin(0, 1);   // SDA (Pin 0), SCL(Pin 1)
   ADS.setDataRate(7);  // 0 = slow   4 = medium   7 = fast
   ADS.setMode(0);      // continuous mode
 }
