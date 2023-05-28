@@ -7,7 +7,7 @@
 #define TX_PIN 4
 #define NUM_LEDS 1
 #define LED_PIN 28
-#define NUM_LEDS 1
+
 
 int Button = 20;
 
@@ -27,6 +27,8 @@ void setup() {
   Serial2.begin(9600);
 
   pinMode(Button, INPUT_PULLUP);
+
+  
 }
 
 void loop() {
@@ -44,7 +46,6 @@ void loop() {
       // Example: Fill the strip with red color
       for (int i = 0; i < NUM_LEDS; i++) {
         pixels.setPixelColor(i, pixels.Color(255, 0, 0)); // Set pixel color to red (RGB)
-
       }
       pixels.show(); // Update the strip
       delay(100); // Delay between pixels
@@ -58,7 +59,6 @@ void loop() {
       // Example: Fill the strip with red color
       for (int i = 0; i < NUM_LEDS; i++) {
         pixels.setPixelColor(i, pixels.Color(0, 255, 0)); // Set pixel color to red (RGB)
-
       }
       pixels.show(); // Update the strip
       delay(100); // Delay between pixels

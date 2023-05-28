@@ -1,18 +1,27 @@
 #include "Wire.h"
 #include <MPU6050_light.h>
 #include <SoftwareSerial.h>
+#include <Adafruit_NeoPixel.h>
+
+#define LED_PIN 28
+#define NUM_LEDS 1
 
 MPU6050 mpu(Wire1);
+Adafruit_NeoPixel pixels(NUM_LEDS, LED_PIN, NEO_GRB + NEO_KHZ800);
 
 #define RX_PIN 5
 #define TX_PIN 4
 
-const int speedButton = 20;
-int speedState = HIGH;
-int prevSpeedState = HIGH;
+const int powerButton = 20;
+int powerState = HIGH;
+int prevPowerState = HIGH;
 boolean carOn = false;
 
+unsigned long buttonPressTime = 0;
+const unsigned long longPressDuration = 500; // Adjust the long-press duration as needed (in milliseconds)
+
 void setup() {
+
   Serial2.setRX(RX_PIN);
   Serial2.setTX(TX_PIN);
 
@@ -33,39 +42,51 @@ void setup() {
   mpu.calcOffsets(true, true); // gyro and accelero
   Serial.println("Done!\n");
 
-  pinMode(speedButton, INPUT_PULLUP);
+  pinMode(powerButton, INPUT_PULLUP);
+
+  pixels.begin();
+  pixels.show(); // Initialize all pixels to off
 }
 
 void loop() {
   mpu.update();
 
-  speedState = digitalRead(speedButton);
+  powerState = digitalRead(powerButton);
 
-  if (speedState != prevSpeedState) {
-    delay(50);
+  if (powerState != prevPowerState) {
+    delay(20);
 
-    if (speedState == LOW) {
-      if (carOn) {
-        carOn = false;
-        Serial2.write('0'); // Send off command
-        Serial.println("Car turned OFF");
+    if (powerState == LOW) {
+      buttonPressTime = millis(); // Record button press time
+    } else {
+      unsigned long buttonReleaseTime = millis();
+      unsigned long buttonPressDuration = buttonReleaseTime - buttonPressTime;
+
+      if (buttonPressDuration < longPressDuration) {
+        toggleCarPower(); // Perform short press action
       } else {
-        carOn = true;
-        Serial2.write('1'); // Send on command
-        Serial.println("Car turned ON");
+        performLongPressAction(); // Perform long press action
       }
     }
 
-    prevSpeedState = speedState;
+    prevPowerState = powerState;
   }
 
   if (carOn) {
+    pixels.setBrightness(20);
+
+    for (int i = 0; i < NUM_LEDS; i++) {
+      pixels.setPixelColor(i, pixels.Color(0, 255, 0)); // Set pixel color to red (RGB)
+    }
+
+    pixels.show(); // Update the strip
+
     int angleX = mpu.getAccAngleX();
     int angleY = mpu.getAccAngleY();
 
     if (angleY < -30) {
       Serial2.write('B'); // Send backward command
-      Serial.println('B'); // 
+      Serial.println('B'); //
     } else if (angleY > 30) {
       Serial2.write('F'); // Send fowars command
       Serial.println('F');
@@ -82,5 +103,50 @@ void loop() {
   } else {
     Serial2.write('O'); // Send off command
     Serial.println('O');
+
+    pixels.setBrightness(50);
+
+    for (int i = 0; i < NUM_LEDS; i++) {
+      pixels.setPixelColor(i, pixels.Color(255, 0, 0)); // Set pixel color to red (RGB)
+    }
+    pixels.show(); // Update the strip
   }
+}
+
+void toggleCarPower() {
+  if (carOn) {
+    carOn = false;
+    Serial2.write('0'); // Send off command
+    Serial.println("Car turned OFF");
+  } else {
+    carOn = true;
+    Serial2.write('1'); // Send on command
+    Serial.println("Car turned ON");
+  }
+}
+
+void performLongPressAction() {
+  for (int i = 0; i < 3; i++) {
+    delay(300);
+    for (int i = 0; i < NUM_LEDS; i++) {
+      pixels.setPixelColor(i, pixels.Color(255, 0, 0)); // Set pixel color to red (RGB)
+    }
+    pixels.show(); // Update the strip
+    delay(300);
+    for (int i = 0; i < NUM_LEDS; i++) {
+      pixels.setPixelColor(i, pixels.Color(0, 0, 0)); // Set pixel color to red (RGB)
+    }
+    pixels.show(); // Update the strip
+    delay(300);
+    for (int i = 0; i < NUM_LEDS; i++) {
+      pixels.setPixelColor(i, pixels.Color(0, 0, 255)); // Set pixel color to red (RGB)
+    }
+    pixels.show(); // Update the strip
+    delay(300);
+    for (int i = 0; i < NUM_LEDS; i++) {
+      pixels.setPixelColor(i, pixels.Color(0, 0, 0)); // Set pixel color to red (RGB)
+    }
+    pixels.show(); // Update the strip
+  }
+  NVIC_SystemReset();
 }
