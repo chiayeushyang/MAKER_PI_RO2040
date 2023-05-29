@@ -6,6 +6,7 @@
 #define LED_PIN 28
 #define NUM_LEDS 1
 
+#define Min_Angle 30
 MPU6050 mpu(Wire1);
 Adafruit_NeoPixel pixels(NUM_LEDS, LED_PIN, NEO_GRB + NEO_KHZ800);
 
@@ -20,11 +21,11 @@ boolean carOn = false;
 unsigned long buttonPressTime = 0;
 const unsigned long longPressDuration = 500; // Adjust the long-press duration as needed (in milliseconds)
 
-void setup() {
+char previousCommand = '\0'; // Previous command sent to the control
 
+void setup() {
   Serial2.setRX(RX_PIN);
   Serial2.setTX(TX_PIN);
-
   Serial2.begin(9600);
 
   Wire1.setSDA(26);
@@ -50,7 +51,7 @@ void setup() {
 
 void loop() {
   mpu.update();
-
+  delay(50);
   powerState = digitalRead(powerButton);
 
   if (powerState != prevPowerState) {
@@ -69,40 +70,46 @@ void loop() {
       }
     }
 
-    prevPowerState = powerState;
+    prevPowerState = powerState; // Update the previous power state
   }
 
   if (carOn) {
     pixels.setBrightness(20);
 
     for (int i = 0; i < NUM_LEDS; i++) {
-      pixels.setPixelColor(i, pixels.Color(0, 255, 0)); // Set pixel color to red (RGB)
+      pixels.setPixelColor(i, pixels.Color(0, 255, 0)); // Set pixel color to green (RGB)
     }
 
     pixels.show(); // Update the strip
 
     int angleX = mpu.getAccAngleX();
     int angleY = mpu.getAccAngleY();
+    
+    char commandToSend = '\0'; // Command to be sent to the control
 
-    if (angleY < -30) {
-      Serial2.write('B'); // Send backward command
-      Serial.println('B'); //
-    } else if (angleY > 30) {
-      Serial2.write('F'); // Send fowars command
-      Serial.println('F');
-    } else if (angleX > 30) {
-      Serial2.write('R'); // Send right command
-      Serial.println('R');
-    } else if (angleX < -30) {
-      Serial2.write('L'); // Send left command
-      Serial.println('L');
+    if (angleY < -Min_Angle) {
+      commandToSend = 'B'; // Send backward command
+    } else if (angleY > Min_Angle) {
+      commandToSend = 'F'; // Send forward command
+    } else if (angleX > Min_Angle) {
+      commandToSend = 'R'; // Send right command
+    } else if (angleX < -Min_Angle) {
+      commandToSend = 'L'; // Send left command
     } else {
-      Serial2.write('S'); // Send stop command
-      Serial.println('S');
+      commandToSend = 'S'; // Send stop command
+    }
+
+    if (commandToSend != previousCommand) {
+      Serial2.write(commandToSend); // Send the command to the control
+      Serial.println(commandToSend);
+      previousCommand = commandToSend; // Update the previous command
     }
   } else {
-    Serial2.write('O'); // Send off command
-    Serial.println('O');
+    if (previousCommand != 'O') {
+      Serial2.write('O'); // Send off command
+      Serial.println('O');
+      previousCommand = 'O'; // Update the previous command
+    }
 
     pixels.setBrightness(50);
 
@@ -116,12 +123,18 @@ void loop() {
 void toggleCarPower() {
   if (carOn) {
     carOn = false;
-    Serial2.write('0'); // Send off command
-    Serial.println("Car turned OFF");
+    if (previousCommand != '0') {
+      Serial2.write('0'); // Send off command
+      Serial.println("Car turned OFF");
+      previousCommand = '0'; // Update the previous command
+    }
   } else {
     carOn = true;
-    Serial2.write('1'); // Send on command
-    Serial.println("Car turned ON");
+    if (previousCommand != '1') {
+      Serial2.write('1'); // Send on command
+      Serial.println("Car turned ON");
+      previousCommand = '1'; // Update the previous command
+    }
   }
 }
 
@@ -134,17 +147,17 @@ void performLongPressAction() {
     pixels.show(); // Update the strip
     delay(300);
     for (int i = 0; i < NUM_LEDS; i++) {
-      pixels.setPixelColor(i, pixels.Color(0, 0, 0)); // Set pixel color to red (RGB)
+      pixels.setPixelColor(i, pixels.Color(0, 0, 0)); // Set pixel color to off (RGB)
     }
     pixels.show(); // Update the strip
     delay(300);
     for (int i = 0; i < NUM_LEDS; i++) {
-      pixels.setPixelColor(i, pixels.Color(0, 0, 255)); // Set pixel color to red (RGB)
+      pixels.setPixelColor(i, pixels.Color(0, 0, 255)); // Set pixel color to blue (RGB)
     }
     pixels.show(); // Update the strip
     delay(300);
     for (int i = 0; i < NUM_LEDS; i++) {
-      pixels.setPixelColor(i, pixels.Color(0, 0, 0)); // Set pixel color to red (RGB)
+      pixels.setPixelColor(i, pixels.Color(0, 0, 0)); // Set pixel color to off (RGB)
     }
     pixels.show(); // Update the strip
   }
