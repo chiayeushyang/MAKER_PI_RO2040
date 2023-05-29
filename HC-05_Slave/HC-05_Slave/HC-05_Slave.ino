@@ -5,8 +5,8 @@
 //TX(4) -> HC-05 RX
 #define RX_PIN 5
 #define TX_PIN 4
-#define NUM_LEDS 1
-#define LED_PIN 28
+#define NUM_LEDS 2
+#define LED_PIN 18
 
 
 int Button = 20;
@@ -28,7 +28,8 @@ void setup() {
 
   pinMode(Button, INPUT_PULLUP);
 
-  
+  pixels.begin();
+  pixels.show(); // Initialize all pixels to off
 }
 
 void loop() {

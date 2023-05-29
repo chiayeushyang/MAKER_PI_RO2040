@@ -8,6 +8,7 @@ Adafruit_NeoPixel pixels(NUM_LEDS, LED_PIN, NEO_GRB + NEO_KHZ800);
 void setup() {
   pixels.begin();
   pixels.show(); // Initialize all pixels to off
+  pixels.setBrightness(20);
 }
 
 void loop() {
