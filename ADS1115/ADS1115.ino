@@ -1,4 +1,3 @@
-
 #include "ADS1X15.h"
 
 // choose your sensor
