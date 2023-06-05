@@ -32,7 +32,7 @@ int avgright;
 int diffelev;
 int diffazi;
 
-int THRESHOLD_VALUE = 900;
+int THRESHOLD_VALUE = 300;
 int SERVO_MIN = 30;
 int SERVO_MAX = 160;
 int SERVO_SMOOTH = 15;
@@ -225,7 +225,7 @@ void automaticsolartracker() {
       }
     }
     if (diffazi < 0) {
-      if (servo_leftright.read() > SERVO_MIN) {
+      if (servo_leftright.read() > 10) {
         servo_leftright.write((servo_leftright.read() - 2));
         delay(SERVO_SMOOTH);
       }
@@ -235,13 +235,13 @@ void automaticsolartracker() {
   if (abs(diffelev) >= THRESHOLD_VALUE) {
     if (diffelev > 0) {
       if (servo_updown.read() < SERVO_MAX) {
-        servo_updown.write((servo_updown.read() - 2));
+        servo_updown.write((servo_updown.read() + 2));
         delay(SERVO_SMOOTH);
       }
     }
     if (diffelev < 0) {
       if (servo_updown.read() > SERVO_MIN) {
-        servo_updown.write((servo_updown.read() + 2));
+        servo_updown.write((servo_updown.read() - 2));
         delay(SERVO_SMOOTH);
       }
     }
