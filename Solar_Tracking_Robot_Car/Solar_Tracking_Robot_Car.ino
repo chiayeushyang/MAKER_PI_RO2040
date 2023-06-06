@@ -32,8 +32,9 @@ int avgright;
 int diffelev;
 int diffazi;
 
-int THRESHOLD_VALUE = 300;
-int SERVO_MIN = 30;
+int DEFAULT_ANGLE = 120;
+int THRESHOLD_VALUE = 600;
+int SERVO_MIN = 20;
 int SERVO_MAX = 160;
 int SERVO_SMOOTH = 15;
 
@@ -122,8 +123,8 @@ void loop() {
       //      pixels.clear();
       //      pixels.show();
 
-      motor1.setSpeed(200);
-      motor2.setSpeed(200);
+      motor1.setSpeed(255);
+      motor2.setSpeed(255);
 
       break;
 
@@ -139,8 +140,8 @@ void loop() {
       //      pixels.clear();
       //      pixels.show();
 
-      motor1.setSpeed(-200);
-      motor2.setSpeed(-200);
+      motor1.setSpeed(-255);
+      motor2.setSpeed(-255);
 
       break;
 
@@ -195,8 +196,8 @@ void setup1() {
   servo_leftright.attach(14);
   servo_updown.attach(15);
 
-  servo_leftright.write(60);
-  servo_updown.write(60);
+  servo_leftright.write(110);
+  servo_updown.write(110);
 }
 
 void loop1() {
@@ -218,14 +219,14 @@ void automaticsolartracker() {
   diffazi = avgright - avgleft;
 
   if (abs(diffazi) >= THRESHOLD_VALUE) {
-    if (diffazi > 0) {
+    if (diffazi < 0) {
       if (servo_leftright.read() < SERVO_MAX) {
         servo_leftright.write((servo_leftright.read() + 2));
         delay(SERVO_SMOOTH);
       }
     }
-    if (diffazi < 0) {
-      if (servo_leftright.read() > 10) {
+    if (diffazi > 0) {
+      if (servo_leftright.read() > SERVO_MIN) {
         servo_leftright.write((servo_leftright.read() - 2));
         delay(SERVO_SMOOTH);
       }
