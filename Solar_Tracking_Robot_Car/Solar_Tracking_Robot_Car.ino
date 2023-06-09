@@ -33,7 +33,7 @@ int diffelev;
 int diffazi;
 
 int DEFAULT_ANGLE = 120;
-int THRESHOLD_VALUE = 600;
+int THRESHOLD_VALUE = 1000;
 int SERVO_MIN = 20;
 int SERVO_MAX = 160;
 int SERVO_SMOOTH = 15;
@@ -91,7 +91,7 @@ void loop() {
       // pixels.show();
 
       motor1.setSpeed(-255);
-      motor2.setSpeed(255);
+      motor2.setSpeed(-255);
       break;
 
     case 'B':
@@ -108,7 +108,7 @@ void loop() {
       //      pixels.show();
 
       motor1.setSpeed(255);
-      motor2.setSpeed(-255);
+      motor2.setSpeed(255);
       break;
 
     case 'L':
@@ -124,7 +124,7 @@ void loop() {
       //      pixels.show();
 
       motor1.setSpeed(255);
-      motor2.setSpeed(255);
+      motor2.setSpeed(-255);
 
       break;
 
@@ -141,7 +141,7 @@ void loop() {
       //      pixels.show();
 
       motor1.setSpeed(-255);
-      motor2.setSpeed(-255);
+      motor2.setSpeed(255);
 
       break;
 
